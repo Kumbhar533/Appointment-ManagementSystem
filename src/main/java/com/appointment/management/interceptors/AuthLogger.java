@@ -69,7 +69,8 @@ public class AuthLogger implements HandlerInterceptor {
 			}
 		}
 
-		return HandlerInterceptor.super.preHandle(request, response, handler);
+		return HandlerInterceptor.super.preHandle(request, response, handler);// return true to proceed the request to
+																				// controller
 	}
 
 }

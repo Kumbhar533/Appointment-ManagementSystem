@@ -3,6 +3,7 @@ package com.appointment.management.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,13 +17,17 @@ import com.appointment.management.utils.ErrorKeyConstant;
 import com.appointment.management.utils.ErrorMessageConstant;
 import com.appointment.management.utils.SuccessKeyConstant;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping("/rolePermission")
+@SecurityRequirement(name = "jwt")
 public class RolePermissionController {
 
 	@Autowired
 	private RolePermissionServiceInterface rolePermissionServiceInterface;
 
+	@PreAuthorize("hasRole('AddRolePermission')")
 	@PostMapping
 	public ResponseEntity<?> addRoleToPermission(@RequestBody RolePermissionDto rolePermissionDto) {
 

@@ -3,6 +3,7 @@ package com.appointment.management.serviceImpl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,7 +18,9 @@ import com.appointment.management.exceptions.ResourceNotFoundException;
 import com.appointment.management.repositories.UserRepository;
 import com.appointment.management.serviceIntf.AuthInterface;
 import com.appointment.management.serviceIntf.RolePermissionServiceInterface;
+import com.appointment.management.utils.CacheOperation;
 import com.appointment.management.utils.ErrorMessageConstant;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class AuthInterfaceImpl implements Serializable, UserDetailsService, AuthInterface {
@@ -26,6 +29,9 @@ public class AuthInterfaceImpl implements Serializable, UserDetailsService, Auth
 	 * 
 	 */
 	private static final long serialVersionUID = -4372565601930807631L;
+
+	@Autowired
+	private CacheOperation cache;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -56,9 +62,28 @@ public class AuthInterfaceImpl implements Serializable, UserDetailsService, Auth
 
 		UserEntity userEntity = new UserEntity();
 
-		userEntity = userRepository.findByEmailIgnoreCaseAndIsActiveTrue(username);
+		// username = email
 
-		if (userEntity == null) {
+		if (!cache.isKeyExist(username, username)) {
+
+			userEntity = userRepository.findByEmailIgnoreCaseAndIsActiveTrue(username);
+			cache.addInCache(username, username, userEntity.toString());
+		}
+
+		else {
+			String jsonString = (String) cache.getFromCache(username, username);
+
+			try {
+				ObjectMapper mapper = new ObjectMapper();
+				Map<String, Object> map = mapper.readValue(jsonString, Map.class);
+				userEntity.setPassword((String) map.get("password"));
+				userEntity.setEmail((String) map.get("email"));
+				userEntity.setId(((Integer) map.get("id")).longValue());
+			} catch (Exception e) {
+				e.getMessage();
+			}
+		}
+		if (userEntity.getEmail().isEmpty()) {
 			throw new ResourceNotFoundException(ErrorMessageConstant.USER_NOT_FOUND);
 		}
 

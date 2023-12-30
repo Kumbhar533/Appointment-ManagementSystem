@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -32,8 +33,11 @@ import com.appointment.management.utils.GlobalFunctions;
 import com.appointment.management.utils.SuccessKeyConstant;
 import com.appointment.management.utils.SuccessMessageConstant;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping("/bulkUpload")
+@SecurityRequirement(name = "jwt")
 public class BulkUploadController {
 
 	@Value("${file.storage.location}")
@@ -48,6 +52,7 @@ public class BulkUploadController {
 	@Autowired
 	private FileStorageService fileStorageService;
 
+	@PreAuthorize("hasRole('BulkUpload')")
 	@PostMapping
 	public ResponseEntity<?> bulkUpload(@RequestParam(name = "file", required = true) MultipartFile file,
 			@RequestAttribute(GlobalFunctions.CUSTUM_ATTRIBUTE_USER_ID) Long userId) {
@@ -65,6 +70,7 @@ public class BulkUploadController {
 
 	}
 
+	@PreAuthorize("hasRole('BulkUploadList')")
 	@GetMapping("/all")
 	public ResponseEntity<?> getAllBulkUpload() {
 
@@ -79,6 +85,7 @@ public class BulkUploadController {
 
 	}
 
+	@PreAuthorize("hasRole('BulkUploadDownload')")
 	@GetMapping("/download")
 	public ResponseEntity<?> downloadFile(@RequestParam String fileName) {
 		try {

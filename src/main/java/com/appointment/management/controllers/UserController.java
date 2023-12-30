@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,13 +31,17 @@ import com.appointment.management.utils.GlobalFunctions;
 import com.appointment.management.utils.SuccessKeyConstant;
 import com.appointment.management.utils.SuccessMessageConstant;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping("/user")
+@SecurityRequirement(name = "jwt")
 public class UserController {
 
 	@Autowired
 	private UserServiceInterface userServiceInterface;
 
+	@PreAuthorize("hasRole('UserUpdate')")
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateUser(@RequestBody UpdateUserDto updateUserDto, @PathVariable Long id,
 			@RequestAttribute(GlobalFunctions.CUSTUM_ATTRIBUTE_USER_ID) Long userId) {
@@ -56,6 +61,7 @@ public class UserController {
 
 	}
 
+	@PreAuthorize("hasRole('UserDelete')")
 	@DeleteMapping("/delete/{Userid}")
 	public ResponseEntity<?> deleteUserById(@PathVariable Long Userid,
 			@RequestAttribute(GlobalFunctions.CUSTUM_ATTRIBUTE_USER_ID) Long Logged) {
@@ -75,6 +81,7 @@ public class UserController {
 
 	}
 
+	@PreAuthorize("hasRole('UserList')")
 	@GetMapping()
 	public ResponseEntity<?> getAllUser(
 			@RequestParam(defaultValue = Constant.DEFAULT_PAGENUMBER, value = Constant.PAGENUMBER) String pageNo,

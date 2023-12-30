@@ -39,6 +39,7 @@ public class BlockServiceImpl implements BlockServiceInterface {
 			blockedUserEntity.setBlockingId(LoggedUser);
 			blockedUserEntity.setReasonForBlock(blockuser.getReason());
 
+			blockedRepository.save(blockedUserEntity);
 		} else {
 			throw new RuntimeException(ErrorMessageConstant.ALREADY_BLOCKED);
 		}

@@ -23,14 +23,19 @@ public class FileStorageService {
 
 	@Autowired
 	public FileStorageService(@Value("${file.storage.location}") String fileStorageLocation) {
-		this.fileStorageLocation = Paths.get(fileStorageLocation).toAbsolutePath().normalize();
+		this.fileStorageLocation = Paths.get(fileStorageLocation).toAbsolutePath().normalize(); // this convert the
+																								// absolute path and
+																								// normalize means
+																								// remove all the
+																								// seperator and symbols
 	}
 
 	public void storeFile(MultipartFile file, String filename) throws IOException {
 		try {
 
-			Files.createDirectories(this.fileStorageLocation);
-			Path filePath = this.fileStorageLocation.resolve(filename).normalize();
+			Files.createDirectories(this.fileStorageLocation);// if directory struture not found then create new
+			Path filePath = this.fileStorageLocation.resolve(filename).normalize(); // it craetes the full path with
+																					// file name
 			Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
 			throw new FileStorageException("Failed to store file " + filename, e);

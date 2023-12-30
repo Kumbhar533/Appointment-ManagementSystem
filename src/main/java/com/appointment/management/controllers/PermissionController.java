@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,13 +31,17 @@ import com.appointment.management.utils.GlobalFunctions;
 import com.appointment.management.utils.SuccessKeyConstant;
 import com.appointment.management.utils.SuccessMessageConstant;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping("/permission")
+@SecurityRequirement(name = "jwt")
 public class PermissionController {
 
 	@Autowired
 	private PermissionServiceInterface permissionServiceInterface;
 
+	@PreAuthorize("hasRole('AddPermission')")
 	@PostMapping
 	public ResponseEntity<?> addPermission(@RequestBody PermissionRequestDto dto,
 			@RequestAttribute(GlobalFunctions.CUSTUM_ATTRIBUTE_USER_ID) Long userId) {
@@ -55,6 +60,7 @@ public class PermissionController {
 
 	}
 
+	@PreAuthorize("hasRole('PermissionList')")
 	@GetMapping("/all")
 	public ResponseEntity<?> getAllPermissions(
 			@RequestParam(defaultValue = Constant.DEFAULT_PAGENUMBER, value = Constant.PAGENUMBER) String pageNo,
@@ -79,6 +85,7 @@ public class PermissionController {
 		}
 	}
 
+	@PreAuthorize("hasRole('DeletePermission')")
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deletePermission(@PathVariable(value = "id") Long id,
 			@RequestAttribute(GlobalFunctions.CUSTUM_ATTRIBUTE_USER_ID) Long userId) {
@@ -95,6 +102,7 @@ public class PermissionController {
 		}
 	}
 
+	@PreAuthorize("hasRole('UpdatePermission')")
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updatePermission(@PathVariable(value = "id") Long id,
 			@RequestAttribute(GlobalFunctions.CUSTUM_ATTRIBUTE_USER_ID) Long loggedId,

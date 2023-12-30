@@ -132,8 +132,7 @@ public class AuthController {
 
 		} catch (Exception e) {
 
-			return new ResponseEntity<>(
-					new ErrorResponseDto(ErrorMessageConstant.INVALID_INFORMATION, ErrorKeyConstant.USER_E031103),
+			return new ResponseEntity<>(new ErrorResponseDto(e.getMessage(), ErrorKeyConstant.USER_E031103),
 					HttpStatus.BAD_REQUEST);
 
 		}

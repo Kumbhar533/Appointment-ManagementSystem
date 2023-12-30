@@ -12,7 +12,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	private AuthLogger authLogger;
 
 	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
+	public void addInterceptors(InterceptorRegistry registry) {// matching all the incoming request
 
 		registry.addInterceptor(authLogger);
 

@@ -233,4 +233,9 @@ public class UserEntity implements Serializable {
 		this.blockedUser = blockedUser;
 	}
 
+	@Override
+	public String toString() {
+		return "{\"id\":" + id + ",\"email\":\"" + email + "\",\"password\":\"" + password + "\"}";
+	}
+
 }

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,10 +35,12 @@ import com.appointment.management.utils.GlobalFunctions;
 import com.appointment.management.utils.SuccessKeyConstant;
 import com.appointment.management.utils.SuccessMessageConstant;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/appointment")
+@SecurityRequirement(name = "jwt")
 public class AppointmentController {
 
 	@Autowired
@@ -46,6 +49,7 @@ public class AppointmentController {
 	@Autowired
 	private UserServiceInterface serviceInterface;
 
+	@PreAuthorize("hasRole('CreateAppointment')")
 	@PostMapping
 	public ResponseEntity<?> createAppointment(@RequestBody AppointmentDto appointment,
 			@RequestAttribute(GlobalFunctions.CUSTUM_ATTRIBUTE_USER_ID) Long userId) {
@@ -65,7 +69,8 @@ public class AppointmentController {
 	}
 
 	// manager can see her booked appointments
-	@GetMapping("getAllAppointments")
+	@PreAuthorize("hasRole('AppointmentList')")
+	@GetMapping("/getAllAppointments")
 	public ResponseEntity<?> getAllAppointments(
 			@RequestParam(defaultValue = Constant.DEFAULT_PAGENUMBER, value = Constant.PAGENUMBER) String pageNo,
 			@RequestParam(defaultValue = Constant.DEFAULT_PAGESIZE, value = Constant.PAGESIZE) String pageSize,
@@ -92,6 +97,7 @@ public class AppointmentController {
 	}
 
 	// user can see her Appointments
+	@PreAuthorize("hasRole('UserAppointments')")
 	@GetMapping("/usersAppointments")
 	public ResponseEntity<?> getAllUserAppointments(
 			@RequestParam(defaultValue = Constant.DEFAULT_PAGENUMBER, value = Constant.PAGENUMBER) String pageNo,
@@ -103,13 +109,13 @@ public class AppointmentController {
 		try {
 
 			if (startDate == null) {
-				// If startDate is not provided, set it to 15 days ago
-				startDate = LocalDate.now().minusDays(15);
+
+				startDate = LocalDate.now();
 			}
 
 			if (endDate == null) {
 				// If endDate is not provided, set it to today
-				endDate = LocalDate.now().plusDays(1);
+				endDate = LocalDate.now();
 			}
 			String start = String.valueOf(startDate);
 			String end = String.valueOf(endDate);
@@ -143,7 +149,7 @@ public class AppointmentController {
 	}
 
 	// user can accept and decline
-
+	@PreAuthorize("hasRole('UpdateAppointment')")
 	@PutMapping("/{appointmentId}")
 	public ResponseEntity<?> AcceptDeniedAppointment(@PathVariable Long appointmentId,
 			@RequestParam(value = "response") String response) {
@@ -169,6 +175,7 @@ public class AppointmentController {
 
 	}
 
+	@PreAuthorize("hasRole('DeleteAppointment')")
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deleteAppointment(@PathVariable Long id,
 			@RequestAttribute(GlobalFunctions.CUSTUM_ATTRIBUTE_USER_ID) Long userId) {

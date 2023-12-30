@@ -1,6 +1,7 @@
 package com.appointment.management.entities;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class AppointmentEntity implements Serializable {
 	private Long id;
 
 	@Column(name = "appointment_date")
-	private Date appointmentDate;
+	private LocalDateTime appointmentDate;
 
 	@JoinColumn(name = "developer_id")
 	@ManyToOne(cascade = CascadeType.ALL)
@@ -70,23 +71,6 @@ public class AppointmentEntity implements Serializable {
 	@OneToMany(mappedBy = "appointmentEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<AppointmentResponseEntity> responses;
 
-	public AppointmentEntity(Long id, Date appointmentDate, UserEntity developer, UserEntity manager, Boolean isActive,
-			AppointmentResponseEnum status, Date createdAt, Date updatedAt, Long createdBy, Long updatedBy,
-			List<AppointmentResponseEntity> responses) {
-		super();
-		this.id = id;
-		this.appointmentDate = appointmentDate;
-		this.developer = developer;
-		this.manager = manager;
-		this.isActive = isActive;
-		this.status = status;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
-		this.createdBy = createdBy;
-		this.updatedBy = updatedBy;
-		this.responses = responses;
-	}
-
 	public Long getId() {
 		return id;
 	}
@@ -95,11 +79,11 @@ public class AppointmentEntity implements Serializable {
 		this.id = id;
 	}
 
-	public Date getAppointmentDate() {
+	public LocalDateTime getAppointmentDate() {
 		return appointmentDate;
 	}
 
-	public void setAppointmentDate(Date appointmentDate) {
+	public void setAppointmentDate(LocalDateTime appointmentDate) {
 		this.appointmentDate = appointmentDate;
 	}
 
@@ -177,6 +161,23 @@ public class AppointmentEntity implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public AppointmentEntity(Long id, LocalDateTime appointmentDate, UserEntity developer, UserEntity manager,
+			Boolean isActive, AppointmentResponseEnum status, Date createdAt, Date updatedAt, Long createdBy,
+			Long updatedBy, List<AppointmentResponseEntity> responses) {
+		super();
+		this.id = id;
+		this.appointmentDate = appointmentDate;
+		this.developer = developer;
+		this.manager = manager;
+		this.isActive = isActive;
+		this.status = status;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+		this.createdBy = createdBy;
+		this.updatedBy = updatedBy;
+		this.responses = responses;
 	}
 
 	public AppointmentEntity() {

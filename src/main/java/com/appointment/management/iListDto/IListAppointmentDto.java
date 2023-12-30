@@ -1,12 +1,13 @@
 package com.appointment.management.iListDto;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public interface IListAppointmentDto {
 
 	public Long getAppointmentId();
 
-	public Date getAppointmentDate();
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+	public String getAppointmentDate();
 
 	public String getDeveloper();
 

@@ -10,7 +10,7 @@ public interface IListUserAppointmentsDto {
 
 	public Long getAppointmentId();
 
-	@JsonFormat(pattern = "YYYY-MM-dd", shape = Shape.STRING)
+	@JsonFormat(pattern = "YYYY-MM-dd HH:mm:ss", shape = Shape.STRING)
 	public Date getAppointmentDate();
 
 	public String getManager();

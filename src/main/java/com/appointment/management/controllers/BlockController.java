@@ -1,8 +1,11 @@
 package com.appointment.management.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -20,13 +23,17 @@ import com.appointment.management.utils.GlobalFunctions;
 import com.appointment.management.utils.SuccessKeyConstant;
 import com.appointment.management.utils.SuccessMessageConstant;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping("/block")
+@SecurityRequirement(name = "jwt")
 public class BlockController {
 
 	@Autowired
 	private BlockServiceInterface blockServiceInterface;
 
+	@PreAuthorize("hasRole('BlockUser')")
 	@PostMapping
 	public ResponseEntity<?> blockUser(@RequestBody BlockUserDto blockuser,
 			@RequestAttribute(GlobalFunctions.CUSTUM_ATTRIBUTE_USER_ID) Long userId) {
@@ -43,15 +50,16 @@ public class BlockController {
 
 	}
 
+	@PreAuthorize("hasRole('BlockedUserList')")
 	@GetMapping("/getAll")
-	public ResponseEntity<?> getAllBlockedUser(@RequestBody IBlockedUserDto blockedUserDto,
+	public ResponseEntity<?> getAllBlockedUser(
 			@RequestAttribute(GlobalFunctions.CUSTUM_ATTRIBUTE_USER_ID) Long userId) {
 
 		try {
 
-			this.blockServiceInterface.listOfBlockedUsers(userId);
+			List<IBlockedUserDto> listOfBlockedUsers = this.blockServiceInterface.listOfBlockedUsers(userId);
 			return new ResponseEntity<>(new SuccessResponseDto(SuccessMessageConstant.BLOCK_USERS,
-					SuccessKeyConstant.BLOCK_USER_E031302, blockedUserDto), HttpStatus.OK);
+					SuccessKeyConstant.BLOCK_USER_E031302, listOfBlockedUsers), HttpStatus.OK);
 		} catch (Exception e) {
 
 			return new ResponseEntity<>(new ErrorResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);

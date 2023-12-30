@@ -6,13 +6,10 @@ public class BlockUserDto {
 
 	private String reason;
 
-	private boolean blockStatus;
-
-	public BlockUserDto(Long blockedEntityId, String reason, boolean blockStatus) {
+	public BlockUserDto(Long blockedEntityId, String reason) {
 		super();
 		this.blockedEntityId = blockedEntityId;
 		this.reason = reason;
-		this.blockStatus = blockStatus;
 	}
 
 	public Long getBlockedEntityId() {
@@ -29,14 +26,6 @@ public class BlockUserDto {
 
 	public void setReason(String reason) {
 		this.reason = reason;
-	}
-
-	public boolean isBlockStatus() {
-		return blockStatus;
-	}
-
-	public void setBlockStatus(boolean blockStatus) {
-		this.blockStatus = blockStatus;
 	}
 
 	public BlockUserDto() {

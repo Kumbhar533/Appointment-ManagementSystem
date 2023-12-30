@@ -169,7 +169,7 @@ public class ExceptionHandlerControllerAdvice {
 		errorLoggerRepository.save(errorRequest);
 
 		ErrorResponseDto error = new ErrorResponseDto();
-		error.setMessage("Something went wrong. Please contact the administrator" + exception.getMessage());
+		error.setMessage("Something went wrong. Please contact the administrator  " + exception.getMessage());
 		error.setMsgKey("something went wrong.");
 		return error;
 

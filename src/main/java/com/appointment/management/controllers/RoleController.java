@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,13 +32,17 @@ import com.appointment.management.utils.GlobalFunctions;
 import com.appointment.management.utils.SuccessKeyConstant;
 import com.appointment.management.utils.SuccessMessageConstant;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping("/role")
+@SecurityRequirement(name = "jwt")
 public class RoleController {
 
 	@Autowired
 	private RoleServiceInterface roleServiceInterface;
 
+	@PreAuthorize("hasRole('AddRole')")
 	@PostMapping
 	public ResponseEntity<?> addRole(@RequestBody RoleDto roleDto) {
 
@@ -49,12 +54,13 @@ public class RoleController {
 
 		} catch (Exception e) {
 			return new ResponseEntity<>(
-					new ErrorResponseDto(ErrorMessageConstant.INVALID_ROLE, ErrorKeyConstant.ROLE_E032203),
+					new ErrorResponseDto(ErrorMessageConstant.ROLE_ALREADY_PRESENT, ErrorKeyConstant.ROLE_E032203),
 					HttpStatus.BAD_REQUEST);
 		}
 
 	}
 
+	@PreAuthorize("hasRole('UpdateRole')")
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateRole(@PathVariable Long id,
 			@RequestAttribute(GlobalFunctions.CUSTUM_ATTRIBUTE_USER_ID) Long loggedId, @RequestBody RoleDto roledto) {
@@ -71,6 +77,7 @@ public class RoleController {
 		}
 	}
 
+	@PreAuthorize("hasRole('RoleList')")
 	@GetMapping("/all")
 	public ResponseEntity<?> allRoles(
 			@RequestParam(defaultValue = Constant.DEFAULT_PAGENUMBER, value = Constant.PAGENUMBER) String pageNo,
@@ -95,6 +102,7 @@ public class RoleController {
 		}
 	}
 
+	@PreAuthorize("hasRole('RolePermission')")
 	@GetMapping("/permissions/{id}")
 	public ResponseEntity<?> permissionsByRole(@PathVariable(value = "id") Long id) {
 		try {
